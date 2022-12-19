@@ -2,8 +2,8 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
-from api.models import *
-from api.serializers import *
+from api.models import User
+from api.serializers import UserSerializers
 
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -20,7 +20,11 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
 
 class CustomTokenObatinPairView(TokenObtainPairView):
+    """sumary_line"""
+    
     def post(self, request, *args, **kwargs):
+        """sumary_line"""
+        
         serializer = self.get_serializer(data=request.data)
         try:
             user = get_object_or_404(User, username=request.data["username"])
@@ -52,13 +56,17 @@ class CustomTokenObatinPairView(TokenObtainPairView):
         return Response(data=response, status=status_code)
 
 class LogoutView(APIView):
+    """sumary_line"""
+    
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
+        """sumary_line"""
+        
         try:
             refresh_token = request.data["refresh_token"]
             token = RefreshToken(refresh_token)
             token.blacklist()
             return Response(status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
+        except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)

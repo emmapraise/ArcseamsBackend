@@ -66,3 +66,46 @@ class common (models.Model):
 
     class Meta:
         abstract = True
+
+class Measurement(common):
+    """This is the model for each measurement"""
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    bust = models.IntegerField()
+    Waist = models.IntegerField()
+    hip = models.IntegerField()
+    back= models.IntegerField()
+    sleeve_length = models.IntegerField()
+    round_sleeve = models.IntegerField()
+    bicep = models.IntegerField()
+    half_length = models.IntegerField()
+    breast_point = models.IntegerField()
+    full_length = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.user} measurement"
+
+class ShippingAddress(common):
+    """This model stores the shipping information of the user"""
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length= 25)
+    last_name = models.CharField(max_length=25)
+    email = models.EmailField(max_length=50)
+    phone = models.CharField(max_length=11)
+    street = models.CharField(max_length=50)
+    city = models.CharField(max_length=25)
+    state = models.CharField(max_length=20)
+    country = models.CharField(max_length=30, default="Nigeria")
+
+    def __str__(self):
+        return f"{self.user} shipping to {self.street} in {self.city}"
+
+class Image(common):
+    """This model take care of all Image Upload"""
+    
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    path = models.FileField(upload_to="mysite/static/images")
+
+    def __str__(self):
+        return f"{self.user} owns this image {self.path}"
