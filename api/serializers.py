@@ -93,6 +93,12 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
         model = ShippingAddress
         exclude = ["created_at", "updated_at"]
 
+class DesignSerializer(serializers.ModelSerializer):
+    """sumary_line"""
+    class Meta:
+        model = Design
+        exclude = ["created_at", "updated_at"]
+
 class OrderSerializer(serializers.ModelSerializer):
     """sumary_line"""
     

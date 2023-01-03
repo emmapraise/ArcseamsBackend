@@ -9,6 +9,7 @@ router.register(r"register", views.UserViewSet)
 router.register(r"measurement", views.MeasurementViewSet)
 router.register(r"shippingaddress", views.ShippingAddressViewset)
 router.register(r"image", views.ImageViewSet)
+router.register(r"design", views.DesignViewSet)
 router.register(r"order", views.OrderViewset)
 
 urlpatterns = [

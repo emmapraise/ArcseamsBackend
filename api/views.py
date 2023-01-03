@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 
 from rest_framework_simplejwt.exceptions import TokenError
@@ -95,8 +96,14 @@ class ShippingAddressViewset(viewsets.ModelViewSet):
     serializer_class = ShippingAddressSerializer
     permission_classes = []
 
-class OrderViewset(viewsets.ModelViewSet):
+class DesignViewSet(viewsets.ModelViewSet):
     """sumary_line"""
+    queryset = Design.objects.all()
+    serializer_class = DesignSerializer
+    permission_classes = []
+
+class OrderViewset(viewsets.ModelViewSet):
+    """This is the viewset for all action in orders"""
     
     queryset = Orders.objects.all()
     serializer_class = OrderSerializer

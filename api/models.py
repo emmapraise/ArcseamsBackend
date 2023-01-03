@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
+from mysite.enums.order import order_status
+from mysite.enums import order
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -112,14 +114,25 @@ class Image(common):
     def __str__(self):
         return f"{self.user} owns this image {self.path}"
 
+class Design(common):
+    """sumary_line"""
+    
+    measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
+    images = models.ManyToManyField(Image)
+    note = models.TextField()
+
+    def __str__(self):
+        return f"{self.measurement.user} design"
+
 class Orders(common):
     """sumary_line"""
 
     shipping_address = models.ForeignKey(ShippingAddress, on_delete=models.CASCADE)
-    measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
-    images = models.ManyToManyField(Image)
-    # additional_info = models.TextField(null=True, blank=True)
-    # invoice_link = models.CharField(max_length=50, null=True, blank=True)
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, null=True, blank=True)
+    amount = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    additional_info = models.TextField(null=True, blank=True)
+    invoice_link = models.CharField(max_length=50, null=True, blank=True)
+    status = models.IntegerField(choices=order_status(), default=order.PENDING)
 
     def __str__(self):
-        return f"{self.measurement.user} order"
+        return f"{self.design} order"
