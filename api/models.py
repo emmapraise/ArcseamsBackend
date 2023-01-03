@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
+from mysite.enums.order import order_status
+from mysite.enums import order
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -21,14 +23,14 @@ class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         """Create and save a regular User with the given email and password"""
-        
+
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
         """Create and save a Superuser with the given email and password."""
-        
+
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
 
@@ -39,12 +41,10 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+
 class User(AbstractUser):
 
-    GENDER_CHOICES = (
-        ("M", "Male"),
-        ("F", "Female")
-    )
+    GENDER_CHOICES = (("M", "Male"), ("F", "Female"))
 
     phone = models.CharField(max_length=11, unique=True)
     middle_name = models.CharField(max_length=25, blank=True, null=True)
@@ -60,21 +60,23 @@ class User(AbstractUser):
     def __str__(self):
         return self.get_full_name()
 
-class common (models.Model):
+
+class common(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
 
+
 class Measurement(common):
     """This is the model for each measurement"""
-    
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     bust = models.IntegerField()
     Waist = models.IntegerField()
     hip = models.IntegerField()
-    back= models.IntegerField()
+    back = models.IntegerField()
     sleeve_length = models.IntegerField()
     round_sleeve = models.IntegerField()
     bicep = models.IntegerField()
@@ -85,11 +87,12 @@ class Measurement(common):
     def __str__(self):
         return f"{self.user} measurement"
 
+
 class ShippingAddress(common):
     """This model stores the shipping information of the user"""
-    
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length= 25)
+    first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=25)
     email = models.EmailField(max_length=50)
     phone = models.CharField(max_length=11)
@@ -101,11 +104,35 @@ class ShippingAddress(common):
     def __str__(self):
         return f"{self.user} shipping to {self.street} in {self.city}"
 
+
 class Image(common):
     """This model take care of all Image Upload"""
-    
+
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     path = models.FileField(upload_to="mysite/static/images")
 
     def __str__(self):
         return f"{self.user} owns this image {self.path}"
+
+class Design(common):
+    """sumary_line"""
+    
+    measurement = models.ForeignKey(Measurement, on_delete=models.CASCADE)
+    images = models.ManyToManyField(Image)
+    note = models.TextField()
+
+    def __str__(self):
+        return f"{self.measurement.user} design"
+
+class Orders(common):
+    """sumary_line"""
+
+    shipping_address = models.ForeignKey(ShippingAddress, on_delete=models.CASCADE)
+    design = models.ForeignKey(Design, on_delete=models.CASCADE, null=True, blank=True)
+    amount = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    additional_info = models.TextField(null=True, blank=True)
+    invoice_link = models.CharField(max_length=50, null=True, blank=True)
+    status = models.IntegerField(choices=order_status(), default=order.PENDING)
+
+    def __str__(self):
+        return f"{self.design} order"
