@@ -5,7 +5,7 @@ from rest_framework_simplejwt import views as jwt_views
 from api import views
 
 router = routers.DefaultRouter()
-router.register(r"register", views.UserViewSet)
+router.register(r"user", views.UserViewSet)
 router.register(r"measurement", views.MeasurementViewSet)
 router.register(r"shippingaddress", views.ShippingAddressViewset)
 router.register(r"image", views.ImageViewSet)

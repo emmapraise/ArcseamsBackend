@@ -31,7 +31,7 @@ class CustomTokenObatinPairView(TokenObtainPairView):
 
         serializer = self.get_serializer(data=request.data)
         try:
-            user = get_object_or_404(User, username=request.data["username"])
+            user = get_object_or_404(User, username=request.data["email"])
             serializer.is_valid(raise_exception=True)
             status_code = status.HTTP_200_OK
             response = {
